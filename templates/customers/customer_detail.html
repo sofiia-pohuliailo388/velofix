@@ -43,7 +43,8 @@
           <td>{{ bicycle.get_bike_type_display }}</td>
           <td>{{ bicycle.frame_number|default:"-" }}</td>
           <td class="text-end">
-            <a href="{% url 'bicycle-update' bicycle.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+              <a href="{% url 'bicycle-update' bicycle.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+              <a href="{% url 'bicycle-delete' bicycle.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
           </td>
         </tr>
       {% empty %}

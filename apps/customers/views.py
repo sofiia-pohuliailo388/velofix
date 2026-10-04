@@ -110,3 +110,24 @@ class BicycleUpdate(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView)
 
     def get_success_url(self):
         return self.object.customer.get_absolute_url()
+
+
+class BicycleDelete(LoginRequiredMixin, generic.DeleteView):
+    model = Bicycle
+    template_name = "customers/bicycle_confirm_delete.html"
+
+    def form_valid(self, form):
+        try:
+            response = super().form_valid(form)
+            messages.success(self.request, "Bicycle deleted")
+            return response
+        except ProtectedError:
+            count = self.object.repair_orders.count()
+            messages.error(
+                self.request,
+                f"Cannot delete this bicycle: it has {count} repair order(s)",
+            )
+            return redirect(self.object.customer)
+
+    def get_success_url(self):
+        return self.object.customer.get_absolute_url()
