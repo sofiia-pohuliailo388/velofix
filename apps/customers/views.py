@@ -3,7 +3,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib import messages
-from django.db.models import ProtectedError, Q
+from django.db.models import Count, ProtectedError, Q
 from django.shortcuts import redirect
 
 from .models import Customer
@@ -17,7 +17,7 @@ class CustomerList(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().annotate(bicycle_count=Count("bicycles"))
         q = self.request.GET.get("q", "").strip()
         if q:
             queryset = queryset.filter(
