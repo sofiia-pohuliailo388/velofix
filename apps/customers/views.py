@@ -36,3 +36,9 @@ class CustomerCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView
     template_name = "customers/customer_form.html"
     success_url = reverse_lazy("customer-list")
     success_message = "Customer created"
+
+
+class CustomerDetail(LoginRequiredMixin, generic.DetailView):
+    model = Customer
+    template_name = "customers/customer_detail.html"
+

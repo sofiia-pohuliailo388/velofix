@@ -9,17 +9,21 @@
 </div>
 
 <form method="get" class="d-flex gap-2 mb-3">
-    <input type="text" name="q" value="{{ q }}"
-           class="form-control" placeholder="Search by name or phone">
-    <button type="submit" class="btn btn-primary">Search</button>
+  <input type="text" name="q" value="{{ q }}"
+         class="form-control" placeholder="Search by name or phone">
+  <button type="submit" class="btn btn-primary">Search</button>
 </form>
 
 <ul>
-    {% for customer in customers %}
-        <li>{{ customer.full_name }} - {{ customer.phone }}</li>
-    {% empty %}
-        <li>No customers found.</li>
-    {% endfor %}
+  {% for customer in customers %}
+    <li>
+      <a href="{% url 'customer-detail' customer.pk %}">{{ customer.full_name }}</a>
+      - {{ customer.phone }}
+    </li>
+  {% empty %}
+    <li>No customers found.</li>
+  {% endfor %}
 </ul>
+
 {% include "partials/pagination.html" %}
 {% endblock %}
