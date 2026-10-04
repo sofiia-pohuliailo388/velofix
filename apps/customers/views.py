@@ -95,3 +95,18 @@ class BicycleCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView)
 
     def get_success_url(self):
         return self.customer.get_absolute_url()
+
+
+class BicycleUpdate(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
+    model = Bicycle
+    form_class = BicycleForm
+    template_name = "customers/bicycle_form.html"
+    success_message = "Bicycle updated"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["customer"] = self.object.customer
+        return context
+
+    def get_success_url(self):
+        return self.object.customer.get_absolute_url()

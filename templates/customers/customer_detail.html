@@ -25,29 +25,33 @@
   <a href="{% url 'bicycle-create' customer.pk %}" class="btn btn-success btn-sm">Add bicycle</a>
 </div>
 <div class="table-responsive">
-    <table class="table table-hover bg-white">
-        <thead>
+  <table class="table table-hover align-middle bg-white">
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Type</th>
+        <th>Frame number</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for bicycle in customer.bicycles.all %}
         <tr>
-            <th>Brand</th>
-            <th>Model</th>
-            <th>Type</th>
-            <th>Frame number</th>
+          <td>{{ bicycle.brand }}</td>
+          <td>{{ bicycle.model }}</td>
+          <td>{{ bicycle.get_bike_type_display }}</td>
+          <td>{{ bicycle.frame_number|default:"-" }}</td>
+          <td class="text-end">
+            <a href="{% url 'bicycle-update' bicycle.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+          </td>
         </tr>
-        </thead>
-        <tbody>
-        {% for bicycle in customer.bicycles.all %}
-            <tr>
-                <td>{{ bicycle.brand }}</td>
-                <td>{{ bicycle.model }}</td>
-                <td>{{ bicycle.get_bike_type_display }}</td>
-                <td>{{ bicycle.frame_number|default:"-" }}</td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="4" class="text-muted">This customer has no bicycles yet.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+      {% empty %}
+        <tr>
+          <td colspan="5" class="text-muted">This customer has no bicycles yet.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}
