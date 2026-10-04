@@ -1,14 +1,18 @@
+from typing import Any
+
+from django import http
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import HttpResponseBase
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib import messages
 from django.db.models import Count, ProtectedError, Q
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 
-from .models import Customer
+from .models import Customer, Bicycle
 
-from .forms import CustomerForm
+from .forms import CustomerForm, BicycleForm
 
 class CustomerList(LoginRequiredMixin, generic.ListView):
     model = Customer
@@ -69,3 +73,25 @@ class CustomerDelete(LoginRequiredMixin, generic.DeleteView):
                 f"Cannot delete this customer: they have {count} bicycle(s) with repair history",
             )
             return redirect(self.object)
+
+class BicycleCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
+    models = Bicycle
+    form_class = BicycleForm
+    template_name = "customers/bicycle_form.html"
+    success_message = "Bicycle added"
+
+    def dispatch(self, request: http.HttpRequest, *args: Any, **kwargs: Any):
+        self.customer = get_object_or_404(Customer, pk=kwargs["customer_pk"])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.customer = self.customer
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs: Any):
+        context = super().get_context_data(**kwargs)
+        context["customer"] = self.customer
+        return context
+
+    def get_success_url(self):
+        return self.customer.get_absolute_url()

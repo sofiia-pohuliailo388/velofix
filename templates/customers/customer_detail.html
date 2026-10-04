@@ -20,7 +20,10 @@
     </div>
 </div>
 
-<h2 class="h5 mb-3">Bicycles</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h5 m-0">Bicycles</h2>
+  <a href="{% url 'bicycle-create' customer.pk %}" class="btn btn-success btn-sm">Add bicycle</a>
+</div>
 <div class="table-responsive">
     <table class="table table-hover bg-white">
         <thead>
