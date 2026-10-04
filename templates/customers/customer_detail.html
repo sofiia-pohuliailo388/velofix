@@ -7,6 +7,7 @@
   <h1 class="h3 m-0">{{ customer.full_name }}</h1>
   <div class="d-flex gap-2">
     <a href="{% url 'customer-update' customer.pk %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'customer-delete' customer.pk %}" class="btn btn-outline-danger">Delete</a>
     <a href="{% url 'customer-list' %}" class="btn btn-outline-secondary">Back to list</a>
   </div>
 </div>
