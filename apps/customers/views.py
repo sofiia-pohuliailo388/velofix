@@ -42,3 +42,9 @@ class CustomerDetail(LoginRequiredMixin, generic.DetailView):
     model = Customer
     template_name = "customers/customer_detail.html"
 
+
+class CustomerUpdate(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
+    model = Customer
+    form_class = CustomerForm
+    template_name = "customers/customer_form.html"
+    success_message = "Customer updated."
