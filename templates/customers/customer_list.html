@@ -4,11 +4,19 @@
 
 {% block content %}
 <h1 class="h3 mb-3">List of Customers</h1>
+
+<form method="get" class="d-flex gap-2 mb-3">
+    <input type="text" name="q" value="{{ q }}"
+           class="form-control" placeholder="Search by name or phone">
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
 <ul>
-  {% for customer in customers %}
-    <li>{{ customer.full_name }} - {{ customer.phone }}</li>
-  {% empty %}
-    <li>No customers yet.</li>
-  {% endfor %}
+    {% for customer in customers %}
+        <li>{{ customer.full_name }} - {{ customer.phone }}</li>
+    {% empty %}
+        <li>No customers found.</li>
+    {% endfor %}
 </ul>
+{% include "partials/pagination.html" %}
 {% endblock %}
