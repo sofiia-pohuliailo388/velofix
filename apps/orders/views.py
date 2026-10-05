@@ -39,6 +39,7 @@ class OrderDetail(LoginRequiredMixin, generic.DetailView):
     template_name = "orders/order_detail.html"
     context_object_name = "order"
 
+
 class OrderServiceCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     model = OrderService
     form_class = OrderServiceForm
@@ -70,6 +71,7 @@ class OrderServiceDelete(LoginRequiredMixin, View):
         line.delete()
         messages.success(request, "Service removed.")
         return redirect(order)
+
 
 class OrderList(LoginRequiredMixin, generic.ListView):
     queryset = RepairOrder.objects.select_related("bicycle__customer")
@@ -105,6 +107,7 @@ class OrderList(LoginRequiredMixin, generic.ListView):
         context["overdue"] = self.request.GET.get("overdue", "")
         context["statuses"] = RepairOrder.Status.choices
         return context
+
 
 class OrderChangeStatus(LoginRequiredMixin, View):
     def post(self, request, pk):

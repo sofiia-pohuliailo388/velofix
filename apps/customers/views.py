@@ -1,9 +1,7 @@
 from typing import Any
-
 from django import http
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponseBase
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib import messages
@@ -14,6 +12,7 @@ from .models import Customer, Bicycle
 
 from .forms import CustomerForm, BicycleForm
 
+
 class CustomerList(LoginRequiredMixin, generic.ListView):
     model = Customer
     template_name = "customers/customer_list.html"
@@ -23,12 +22,11 @@ class CustomerList(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         queryset = super().get_queryset().annotate(bicycle_count=Count("bicycles"))
         q = self.request.GET.get("q", "").strip()
-        if q:
+        for word in q.split():
             queryset = queryset.filter(
-                Q(full_name__icontains=q) | Q(phone__icontains=q)
+                Q(full_name__icontains=word) | Q(phone__icontains=word)
             )
-
-        return queryset
+        return queryset.order_by("full_name")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -73,6 +71,7 @@ class CustomerDelete(LoginRequiredMixin, generic.DeleteView):
                 f"Cannot delete this customer: they have {count} bicycle(s) with repair history",
             )
             return redirect(self.object)
+
 
 class BicycleCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     models = Bicycle
@@ -131,6 +130,7 @@ class BicycleDelete(LoginRequiredMixin, generic.DeleteView):
 
     def get_success_url(self):
         return self.object.customer.get_absolute_url()
+
 
 class BicycleDetail(LoginRequiredMixin, generic.DetailView):
     model = Bicycle

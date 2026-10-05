@@ -23,5 +23,3 @@ class ServiceForm(forms.ModelForm):
         if price < 0:
             raise forms.ValidationError("Price cannot be negative")
         return price
-
-
