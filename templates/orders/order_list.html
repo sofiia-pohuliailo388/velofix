@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Orders - VeloFix{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Repair orders</h1>
+
+<form method="get" class="row g-2 align-items-center mb-3">
+  <div class="col-md-4">
+    <input type="text" name="q" value="{{ q }}" class="form-control"
+           placeholder="Customer, brand, model or frame number">
+  </div>
+  <div class="col-md-3">
+    <select name="status" class="form-select">
+      <option value="">All statuses</option>
+      {% for value, label in statuses %}
+        <option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="overdue" value="1" id="overdue"
+             {% if overdue %}checked{% endif %}>
+      <label class="form-check-label text-nowrap" for="overdue">Overdue only</label>
+    </div>
+  </div>
+  <div class="col-auto d-flex gap-2">
+    <button type="submit" class="btn btn-primary">Filter</button>
+    <a href="{% url 'order-list' %}" class="btn btn-outline-secondary">Reset</a>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle bg-white">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Bicycle</th>
+        <th>Customer</th>
+        <th>Status</th>
+        <th>Deadline</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+        <tr>
+          <td><a href="{% url 'order-detail' order.pk %}">#{{ order.pk }}</a></td>
+          <td>{{ order.bicycle.brand }} {{ order.bicycle.model }}</td>
+          <td>
+            <a href="{{ order.bicycle.customer.get_absolute_url }}">{{ order.bicycle.customer.full_name }}</a>
+          </td>
+          <td><span class="badge text-bg-primary">{{ order.get_status_display }}</span></td>
+          <td class="text-nowrap">
+            {{ order.deadline|date:"Y-m-d H:i" }}
+            {% if order.is_overdue %}
+              <span class="badge text-bg-danger">Overdue</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5" class="text-muted">
+            No orders found. Orders are created from a customer's bicycle.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "partials/pagination.html" %}
+{% endblock %}

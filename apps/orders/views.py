@@ -1,7 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.views import generic
 from django.views.generic.base import View
 
@@ -67,3 +69,38 @@ class OrderServiceDelete(LoginRequiredMixin, View):
         line.delete()
         messages.success(request, "Service removed.")
         return redirect(order)
+
+class OrderList(LoginRequiredMixin, generic.ListView):
+    queryset = RepairOrder.objects.select_related("bicycle__customer")
+    template_name = "orders/order_list.html"
+    context_object_name = "orders"
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        q = self.request.GET.get("q", "").strip()
+        status = self.request.GET.get("status", "")
+        overdue = self.request.GET.get("overdue", "")
+
+        for word in q.split():
+            queryset = queryset.filter(
+                Q(bicycle__customer__full_name__icontains=word)
+                | Q(bicycle__brand__icontains=word)
+                | Q(bicycle__model__icontains=word)
+                | Q(bicycle__frame_number__icontains=word)
+            )
+        if status:
+            queryset = queryset.filter(status=status)
+        if overdue == "1":
+            queryset = queryset.exclude(
+                status__in=[RepairOrder.Status.DELIVERED, RepairOrder.Status.CANCELLED]
+            ).filter(deadline__lt=timezone.now())
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["q"] = self.request.GET.get("q", "").strip()
+        context["status"] = self.request.GET.get("status", "")
+        context["overdue"] = self.request.GET.get("overdue", "")
+        context["statuses"] = RepairOrder.Status.choices
+        return context

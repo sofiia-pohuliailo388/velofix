@@ -46,3 +46,4 @@ class OrderServiceForm(forms.ModelForm):
         if quantity < 1:
             raise forms.ValidationError("Quantity must be at least 1.")
         return quantity
+

@@ -5,6 +5,7 @@ from .views import (
     OrderDetail,
     OrderServiceCreate,
     OrderServiceDelete,
+    OrderList,
 )
 
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path("<int:pk>/", OrderDetail.as_view(), name="order-detail"),
     path("<int:order_pk>/services/add/", OrderServiceCreate.as_view(), name="order-service-add"),
     path("services/<int:pk>/delete/", OrderServiceDelete.as_view(), name="order-service-delete"),
+path("", OrderList.as_view(), name="order-list"),
 ]
