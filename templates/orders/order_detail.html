@@ -11,7 +11,10 @@
       <span class="badge text-bg-danger fs-6 align-middle">Overdue</span>
     {% endif %}
   </h1>
-  <a href="{{ order.bicycle.customer.get_absolute_url }}" class="btn btn-outline-secondary">Back to customer</a>
+  <div class="d-flex gap-2">
+    <a href="{% url 'bicycle-detail' order.bicycle.pk %}" class="btn btn-outline-secondary">Back to bicycle</a>
+    <a href="{{ order.bicycle.customer.get_absolute_url }}" class="btn btn-outline-secondary">Back to customer</a>
+  </div>
 </div>
 
 <div class="row g-3 mb-4">
@@ -19,7 +22,11 @@
     <div class="card h-100">
       <div class="card-body">
         <h2 class="h6 text-muted">Bicycle</h2>
-        <p class="mb-1"><strong>{{ order.bicycle.brand }} {{ order.bicycle.model }}</strong></p>
+        <p class="mb-1">
+          <strong>
+            <a href="{% url 'bicycle-detail' order.bicycle.pk %}">{{ order.bicycle.brand }} {{ order.bicycle.model }}</a>
+          </strong>
+        </p>
         <p class="mb-1">{{ order.bicycle.get_bike_type_display }}</p>
         <p class="mb-0">Owner:
           <a href="{{ order.bicycle.customer.get_absolute_url }}">{{ order.bicycle.customer.full_name }}</a>

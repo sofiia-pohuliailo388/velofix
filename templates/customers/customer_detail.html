@@ -39,8 +39,8 @@
     <tbody>
       {% for bicycle in customer.bicycles.all %}
         <tr>
-          <td>{{ bicycle.brand }}</td>
-          <td>{{ bicycle.model }}</td>
+          <td><a href="{% url 'bicycle-detail' bicycle.pk %}">{{ bicycle.brand }}</a></td>
+          <td><a href="{% url 'bicycle-detail' bicycle.pk %}">{{ bicycle.model }}</a></td>
           <td>{{ bicycle.get_bike_type_display }}</td>
           <td>{{ bicycle.frame_number|default:"-" }}</td>
           <td class="text-end text-nowrap">

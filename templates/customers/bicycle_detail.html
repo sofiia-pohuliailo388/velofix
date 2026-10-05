@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{{ bicycle.brand }} {{ bicycle.model }} - VeloFix{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 m-0">{{ bicycle.brand }} {{ bicycle.model }}</h1>
+  <div class="d-flex gap-2">
+    <a href="{% url 'order-create' bicycle.pk %}" class="btn btn-success">New order</a>
+    <a href="{% url 'bicycle-update' bicycle.pk %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'bicycle-delete' bicycle.pk %}" class="btn btn-outline-danger">Delete</a>
+    <a href="{{ bicycle.customer.get_absolute_url }}" class="btn btn-outline-secondary">Back to owner</a>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <p class="mb-1"><strong>Owner:</strong>
+      <a href="{{ bicycle.customer.get_absolute_url }}">{{ bicycle.customer.full_name }}</a>
+      ({{ bicycle.customer.phone }})
+    </p>
+    <p class="mb-1"><strong>Type:</strong> {{ bicycle.get_bike_type_display }}</p>
+    <p class="mb-1"><strong>Frame number:</strong> {{ bicycle.frame_number|default:"-" }}</p>
+    <p class="mb-0"><strong>Notes:</strong> {{ bicycle.notes|default:"-" }}</p>
+  </div>
+</div>
+
+<h2 class="h5 mb-3">Repair history</h2>
+<div class="table-responsive">
+  <table class="table table-hover align-middle bg-white">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Created</th>
+        <th>Problem</th>
+        <th>Status</th>
+        <th>Deadline</th>
+        <th class="text-end">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in bicycle.repair_orders.all %}
+        <tr>
+          <td><a href="{% url 'order-detail' order.pk %}">#{{ order.pk }}</a></td>
+          <td class="text-nowrap">{{ order.created_at|date:"Y-m-d" }}</td>
+          <td class="text-muted">{{ order.problem_description|truncatechars:50 }}</td>
+          <td><span class="badge text-bg-primary">{{ order.get_status_display }}</span></td>
+          <td class="text-nowrap">
+            {{ order.deadline|date:"Y-m-d H:i" }}
+            {% if order.is_overdue %}
+              <span class="badge text-bg-danger">Overdue</span>
+            {% endif %}
+          </td>
+          <td class="text-end">{{ order.total }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6" class="text-muted">This bicycle has no repair orders yet.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

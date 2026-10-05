@@ -8,7 +8,8 @@ from .views import (
     CustomerDelete,
     BicycleCreate,
     BicycleDelete,
-    BicycleUpdate
+    BicycleUpdate,
+    BicycleDetail,
 )
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path("<int:customer_pk>/bicycles/add/", BicycleCreate.as_view(), name="bicycle-create"),
     path("bicycles/<int:pk>/edit/", BicycleUpdate.as_view(), name="bicycle-update"),
     path("bicycles/<int:pk>/delete/", BicycleDelete.as_view(), name="bicycle-delete"),
+    path("bicycles/<int:pk>/", BicycleDetail.as_view(), name="bicycle-detail"),
 ]

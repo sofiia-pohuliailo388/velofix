@@ -131,3 +131,8 @@ class BicycleDelete(LoginRequiredMixin, generic.DeleteView):
 
     def get_success_url(self):
         return self.object.customer.get_absolute_url()
+
+class BicycleDetail(LoginRequiredMixin, generic.DetailView):
+    model = Bicycle
+    queryset = Bicycle.objects.select_related("customer").prefetch_related("repair_orders")
+    template_name = "customers/bicycle_detail.html"
