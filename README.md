@@ -2,8 +2,9 @@
 
 A Django web application for managing a small bicycle repair shop. It keeps customers, bicycles, repair orders, services and spare parts in one place, so the shop does not lose agreements with customers, miss deadlines or forget the repair history of a bike.
 
-**Demo login:** click **Log in as demo** on the login page, or use `demo` / `your-demo-password`
-The demo database contains fictional data only.
+**Live demo:** https://velofix.onrender.com
+
+**Demo login:** username `user`, password `user12345`
 
 ## The problem
 
