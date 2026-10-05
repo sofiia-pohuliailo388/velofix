@@ -11,6 +11,10 @@
     <div class="container">
         <a class="navbar-brand" href="{% url 'home' %}">VeloFix</a>
         {% if user.is_authenticated %}
+        <div class="navbar-nav flex-row gap-3 me-auto ms-4">
+            <a class="nav-link" href="{% url 'customer-list' %}">Customers</a>
+            <a class="nav-link" href="{% url 'service-list' %}">Services</a>
+        </div>
         <div class="ms-auto d-flex align-items-center gap-3">
             <span class="text-light">{{ user }}</span>
             <form method="post" action="{% url 'logout' %}" class="m-0">
