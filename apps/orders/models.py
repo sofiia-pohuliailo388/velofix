@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.db.models import DecimalField, F, Q, Sum
+from django.urls import reverse
 from django.utils import timezone
 
 
@@ -109,6 +110,9 @@ class RepairOrder(models.Model):
     @property
     def total(self):
         return self.total_services + self.total_parts
+
+    def get_absolute_url(self):
+        return reverse("order-detail", kwargs={"pk": self.pk})
 
 
 class RepairOrderMechanic(models.Model):

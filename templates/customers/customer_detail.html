@@ -13,17 +13,18 @@
 </div>
 
 <div class="card mb-4">
-    <div class="card-body">
-        <p class="mb-1"><strong>Phone:</strong> {{ customer.phone }}</p>
-        <p class="mb-1"><strong>Email:</strong> {{ customer.email|default:"-" }}</p>
-        <p class="mb-0"><strong>Notes:</strong> {{ customer.notes|default:"-" }}</p>
-    </div>
+  <div class="card-body">
+    <p class="mb-1"><strong>Phone:</strong> {{ customer.phone }}</p>
+    <p class="mb-1"><strong>Email:</strong> {{ customer.email|default:"-" }}</p>
+    <p class="mb-0"><strong>Notes:</strong> {{ customer.notes|default:"-" }}</p>
+  </div>
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h2 class="h5 m-0">Bicycles</h2>
   <a href="{% url 'bicycle-create' customer.pk %}" class="btn btn-success btn-sm">Add bicycle</a>
 </div>
+
 <div class="table-responsive">
   <table class="table table-hover align-middle bg-white">
     <thead>
@@ -42,9 +43,10 @@
           <td>{{ bicycle.model }}</td>
           <td>{{ bicycle.get_bike_type_display }}</td>
           <td>{{ bicycle.frame_number|default:"-" }}</td>
-          <td class="text-end">
-              <a href="{% url 'bicycle-update' bicycle.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
-              <a href="{% url 'bicycle-delete' bicycle.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+          <td class="text-end text-nowrap">
+            <a href="{% url 'order-create' bicycle.pk %}" class="btn btn-success btn-sm">New order</a>
+            <a href="{% url 'bicycle-update' bicycle.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+            <a href="{% url 'bicycle-delete' bicycle.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
           </td>
         </tr>
       {% empty %}
