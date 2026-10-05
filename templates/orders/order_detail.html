@@ -17,6 +17,24 @@
   </div>
 </div>
 
+{% if order.allowed_transitions %}
+<div class="card mb-4">
+  <div class="card-body d-flex flex-wrap align-items-center gap-2">
+    <span class="text-muted me-2">Move to:</span>
+    {% for value, label in order.allowed_transitions %}
+      <form method="post" action="{% url 'order-status' order.pk %}" class="m-0">
+        {% csrf_token %}
+        <input type="hidden" name="status" value="{{ value }}">
+        <button type="submit"
+                class="btn btn-sm {% if value == 'cancelled' %}btn-outline-danger{% else %}btn-primary{% endif %}">
+          {{ label }}
+        </button>
+      </form>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 <div class="row g-3 mb-4">
   <div class="col-md-6">
     <div class="card h-100">
@@ -40,7 +58,16 @@
       <div class="card-body">
         <h2 class="h6 text-muted">Dates</h2>
         <p class="mb-1">Created: {{ order.created_at|date:"Y-m-d H:i" }}</p>
-        <p class="mb-0">Deadline: {{ order.deadline|date:"Y-m-d H:i" }}</p>
+        <p class="mb-1">Deadline: {{ order.deadline|date:"Y-m-d H:i" }}</p>
+        {% if order.completed_at %}
+          <p class="mb-1">Completed: {{ order.completed_at|date:"Y-m-d H:i" }}</p>
+        {% endif %}
+        {% if order.delivered_at %}
+          <p class="mb-1">Delivered: {{ order.delivered_at|date:"Y-m-d H:i" }}</p>
+        {% endif %}
+        {% if order.paid_at %}
+          <p class="mb-0">Paid: {{ order.paid_at|date:"Y-m-d H:i" }}</p>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -59,7 +86,9 @@
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="h6 text-muted m-0">Services</h2>
-      <a href="{% url 'order-service-add' order.pk %}" class="btn btn-success btn-sm">Add service</a>
+      {% if not order.is_closed %}
+        <a href="{% url 'order-service-add' order.pk %}" class="btn btn-success btn-sm">Add service</a>
+      {% endif %}
     </div>
 
     <div class="table-responsive">
@@ -81,10 +110,12 @@
               <td class="text-center">{{ line.quantity }}</td>
               <td class="text-end">{{ line.line_total }}</td>
               <td class="text-end">
-                <form method="post" action="{% url 'order-service-delete' line.pk %}" class="d-inline">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
-                </form>
+                {% if not order.is_closed %}
+                  <form method="post" action="{% url 'order-service-delete' line.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                  </form>
+                {% endif %}
               </td>
             </tr>
           {% empty %}

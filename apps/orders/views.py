@@ -11,6 +11,7 @@ from apps.customers.models import Bicycle
 
 from .forms import RepairOrderForm, OrderServiceForm
 from .models import RepairOrder, OrderService
+from .services import TransitionError, change_status
 
 
 class OrderCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
@@ -104,3 +105,14 @@ class OrderList(LoginRequiredMixin, generic.ListView):
         context["overdue"] = self.request.GET.get("overdue", "")
         context["statuses"] = RepairOrder.Status.choices
         return context
+
+class OrderChangeStatus(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        order = get_object_or_404(RepairOrder, pk=pk)
+        new_status = request.POST.get("status", "")
+        try:
+            change_status(order, new_status)
+            messages.success(request, "Status updated.")
+        except TransitionError as error:
+            messages.error(request, str(error))
+        return redirect(order)

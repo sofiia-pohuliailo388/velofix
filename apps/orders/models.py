@@ -7,6 +7,18 @@ from django.urls import reverse
 from django.utils import timezone
 
 
+TRANSITIONS = {
+    "accepted": ["diagnosis", "cancelled"],
+    "diagnosis": ["in_progress", "cancelled"],
+    "waiting_approval": ["in_progress", "cancelled"],
+    "waiting_parts": ["in_progress", "cancelled"],
+    "in_progress": ["ready", "cancelled"],
+    "ready": ["delivered", "cancelled"],
+    "delivered": [],
+    "cancelled": [],
+}
+
+
 class RepairOrder(models.Model):
     class Status(models.TextChoices):
         ACCEPTED = "accepted", "Accepted"
@@ -82,6 +94,17 @@ class RepairOrder(models.Model):
     def is_overdue(self):
         active = self.status not in (self.Status.DELIVERED, self.Status.CANCELLED)
         return active and self.deadline < timezone.now()
+
+    @property
+    def is_closed(self):
+        return self.status in (self.Status.DELIVERED, self.Status.CANCELLED)
+
+    @property
+    def allowed_transitions(self):
+        return [
+            (value, self.Status(value).label)
+            for value in TRANSITIONS.get(self.status, [])
+        ]
 
     @property
     def is_quote_approved(self):
