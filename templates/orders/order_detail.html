@@ -50,8 +50,51 @@
 
 <div class="card">
   <div class="card-body">
-    <h2 class="h6 text-muted">Services</h2>
-    <p class="text-muted mb-0">Services will appear here.</p>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="h6 text-muted m-0">Services</h2>
+      <a href="{% url 'order-service-add' order.pk %}" class="btn btn-success btn-sm">Add service</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th class="text-end">Price</th>
+            <th class="text-center">Qty</th>
+            <th class="text-end">Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for line in order.service_lines.all %}
+            <tr>
+              <td>{{ line.service.name }}</td>
+              <td class="text-end">{{ line.unit_price }}</td>
+              <td class="text-center">{{ line.quantity }}</td>
+              <td class="text-end">{{ line.line_total }}</td>
+              <td class="text-end">
+                <form method="post" action="{% url 'order-service-delete' line.pk %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="text-muted">No services added yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3" class="text-end">Total</th>
+            <th class="text-end">{{ order.total }}</th>
+            <th></th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
 </div>
 {% endblock %}

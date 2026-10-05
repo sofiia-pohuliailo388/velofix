@@ -1,12 +1,14 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views import generic
+from django.views.generic.base import View
 
 from apps.customers.models import Bicycle
 
-from .forms import RepairOrderForm
-from .models import RepairOrder
+from .forms import RepairOrderForm, OrderServiceForm
+from .models import RepairOrder, OrderService
 
 
 class OrderCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
@@ -33,3 +35,35 @@ class OrderDetail(LoginRequiredMixin, generic.DetailView):
     queryset = RepairOrder.objects.select_related("bicycle__customer")
     template_name = "orders/order_detail.html"
     context_object_name = "order"
+
+class OrderServiceCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
+    model = OrderService
+    form_class = OrderServiceForm
+    template_name = "orders/orderservice_form.html"
+    success_message = "Service added."
+
+    def dispatch(self, request, *args, **kwargs):
+        self.order = get_object_or_404(RepairOrder, pk=kwargs["order_pk"])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.repair_order = self.order
+        form.instance.unit_price = form.cleaned_data["service"].base_price
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["order"] = self.order
+        return context
+
+    def get_success_url(self):
+        return self.order.get_absolute_url()
+
+
+class OrderServiceDelete(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        line = get_object_or_404(OrderService, pk=pk)
+        order = line.repair_order
+        line.delete()
+        messages.success(request, "Service removed.")
+        return redirect(order)
