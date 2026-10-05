@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - VeloFix{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Welcome, {{ user.first_name|default:user.username }}</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <a href="{% url 'order-list' %}" class="text-decoration-none">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small">Active orders</div>
+          <div class="display-6 text-dark">{{ active_count }}</div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a href="{% url 'order-list' %}?overdue=1" class="text-decoration-none">
+      <div class="card h-100 shadow-sm {% if overdue_count %}border-danger{% endif %}">
+        <div class="card-body">
+          <div class="text-muted small">Overdue</div>
+          <div class="display-6 {% if overdue_count %}text-danger{% else %}text-dark{% endif %}">{{ overdue_count }}</div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a href="{% url 'order-list' %}?status=ready" class="text-decoration-none">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small">Ready for pickup</div>
+          <div class="display-6 text-dark">{{ ready_count }}</div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card h-100 shadow-sm {% if low_stock_count %}border-warning{% endif %}">
+      <div class="card-body">
+        <div class="text-muted small">Low stock parts</div>
+        <div class="display-6 text-dark">{{ low_stock_count }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h2 class="h6 text-muted mb-3">Overdue orders</h2>
+        <table class="table table-sm align-middle mb-0">
+          <tbody>
+            {% for order in overdue_orders %}
+              <tr>
+                <td><a href="{% url 'order-detail' order.pk %}">#{{ order.pk }}</a></td>
+                <td>{{ order.bicycle.brand }} {{ order.bicycle.model }}</td>
+                <td>{{ order.bicycle.customer.full_name }}</td>
+                <td class="text-end text-nowrap text-danger">{{ order.deadline|date:"Y-m-d" }}</td>
+              </tr>
+            {% empty %}
+              <tr><td class="text-muted">No overdue orders.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h2 class="h6 text-muted mb-3">Ready for pickup</h2>
+        <table class="table table-sm align-middle mb-0">
+          <tbody>
+            {% for order in ready_orders %}
+              <tr>
+                <td><a href="{% url 'order-detail' order.pk %}">#{{ order.pk }}</a></td>
+                <td>{{ order.bicycle.brand }} {{ order.bicycle.model }}</td>
+                <td>{{ order.bicycle.customer.full_name }}</td>
+                <td class="text-end text-nowrap">{{ order.bicycle.customer.phone }}</td>
+              </tr>
+            {% empty %}
+              <tr><td class="text-muted">Nothing is waiting for pickup.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h6 text-muted mb-3">Parts to restock</h2>
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Part</th>
+              <th>SKU</th>
+              <th class="text-end">In stock</th>
+              <th class="text-end">Minimum</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for part in low_stock_parts %}
+              <tr>
+                <td>{{ part.name }}</td>
+                <td class="text-muted">{{ part.sku }}</td>
+                <td class="text-end text-danger">{{ part.stock_quantity }}</td>
+                <td class="text-end">{{ part.minimum_stock }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-muted">All parts are in stock.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

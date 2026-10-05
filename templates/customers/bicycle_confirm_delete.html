@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Delete bicycle - VeloFix{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h1 class="h4 mb-3">Delete bicycle</h1>
+        <p>
+          Are you sure you want to delete
+          <strong>{{ object.brand }} {{ object.model }}</strong>
+          owned by {{ object.customer.full_name }}?
+        </p>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Yes, delete</button>
+          <a href="{{ object.customer.get_absolute_url }}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
